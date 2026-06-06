@@ -26,6 +26,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="SlayTheSpire2.LAN.Multiplayer.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>$(Sts2DataDir)/0Harmony.dll</HintPath>
     </Reference>

@@ -1,0 +1,1 @@
+dotnet build SlayTheSpire2.LAN.Multiplayer/SlayTheSpire2.LAN.Multiplayer.csproj -c Release /p:Sts2InstallDir="C:\Program Files (x86)\Steam\steamapps\common\Slay the Spire 2"
