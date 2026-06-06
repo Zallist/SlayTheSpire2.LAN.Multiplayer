@@ -4,9 +4,22 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyVersion>1.6.3.0</AssemblyVersion>
-    <FileVersion>1.6.3.0</FileVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
+    <Sts2InstallDir Condition="'$(Sts2InstallDir)' == '' and '$(OS)' == 'Windows_NT'">V:\SteamLibrary\steamapps\common\Slay the Spire 2</Sts2InstallDir>
+    <Sts2InstallDir Condition="'$(Sts2InstallDir)' == '' and '$(OS)' != 'Windows_NT'">$(HOME)/Library/Application Support/Steam/steamapps/common/Slay the Spire 2/SlayTheSpire2.app/Contents/Resources</Sts2InstallDir>
+    <Sts2DataDir Condition="'$(Sts2DataDir)' == '' and Exists('$(Sts2InstallDir)/data_sts2_macos_arm64')">$(Sts2InstallDir)/data_sts2_macos_arm64</Sts2DataDir>
+    <Sts2DataDir Condition="'$(Sts2DataDir)' == '' and Exists('$(Sts2InstallDir)/data_sts2_macos_x86_64')">$(Sts2InstallDir)/data_sts2_macos_x86_64</Sts2DataDir>
+    <Sts2DataDir Condition="'$(Sts2DataDir)' == '' and Exists('$(Sts2InstallDir)/data_sts2_windows_x86_64')">$(Sts2InstallDir)/data_sts2_windows_x86_64</Sts2DataDir>
+    <Sts2DataDir Condition="'$(Sts2DataDir)' == '' and Exists('$(Sts2InstallDir)/data_sts2_linux_x86_64')">$(Sts2InstallDir)/data_sts2_linux_x86_64</Sts2DataDir>
   </PropertyGroup>
+
+  <Target Name="ValidateSts2DataDir" BeforeTargets="ResolveReferences">
+    <Error Condition="'$(Sts2DataDir)' == ''"
+           Text="Could not locate Slay the Spire 2 data directory. Set Sts2DataDir or Sts2InstallDir." />
+    <Error Condition="!Exists('$(Sts2DataDir)/sts2.dll')"
+           Text="sts2.dll was not found at '$(Sts2DataDir)'. Set Sts2DataDir to a valid data_sts2_* folder." />
+  </Target>
 
   <ItemGroup>
     <PackageReference Include="Godot.SourceGenerators" Version="4.5.1" />
@@ -14,16 +27,16 @@
 
   <ItemGroup>
     <Reference Include="0Harmony">
-      <HintPath>V:\SteamLibrary\steamapps\common\Slay the Spire 2\data_sts2_windows_x86_64\0Harmony.dll</HintPath>
+      <HintPath>$(Sts2DataDir)/0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="GodotSharp">
-      <HintPath>V:\SteamLibrary\steamapps\common\Slay the Spire 2\data_sts2_windows_x86_64\GodotSharp.dll</HintPath>
+      <HintPath>$(Sts2DataDir)/GodotSharp.dll</HintPath>
     </Reference>
     <Reference Include="Steamworks.NET">
-      <HintPath>V:\SteamLibrary\steamapps\common\Slay the Spire 2\data_sts2_windows_x86_64\Steamworks.NET.dll</HintPath>
+      <HintPath>$(Sts2DataDir)/Steamworks.NET.dll</HintPath>
     </Reference>
     <Reference Include="sts2">
-      <HintPath>V:\SteamLibrary\steamapps\common\Slay the Spire 2\data_sts2_windows_x86_64\sts2.dll</HintPath>
+      <HintPath>$(Sts2DataDir)/sts2.dll</HintPath>
     </Reference>
   </ItemGroup>
 

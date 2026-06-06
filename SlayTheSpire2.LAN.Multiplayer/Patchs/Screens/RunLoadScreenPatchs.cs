@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Multiplayer.Game;
 using MegaCrit.Sts2.Core.Multiplayer.Game.Lobby;
@@ -118,6 +119,52 @@ namespace SlayTheSpire2.LAN.Multiplayer.Patchs.Screens
             }
 
             return true;
+        }
+    }
+
+    [HarmonyPatch(typeof(NMultiplayerLoadGameScreen), "_Process")]
+    internal class MultiplayerLoadGameScreenProcessPatch
+    {
+        private static void Postfix(NMultiplayerLoadGameScreen __instance, LoadRunLobby ____runLobby)
+        {
+            LoadScreenButtonHelper.DisableConfirmButtonIfPlayersMissing(__instance, ____runLobby);
+        }
+    }
+
+    [HarmonyPatch(typeof(NDailyRunLoadScreen), "_Process")]
+    internal class DailyRunLoadScreenProcessPatch
+    {
+        private static void Postfix(NSubmenu __instance, LoadRunLobby ____lobby)
+        {
+            LoadScreenButtonHelper.DisableConfirmButtonIfPlayersMissing(__instance, ____lobby);
+        }
+    }
+
+    [HarmonyPatch(typeof(NCustomRunLoadScreen), "_Process")]
+    internal class CustomRunLoadScreenProcessPatch
+    {
+        private static void Postfix(NSubmenu __instance, LoadRunLobby ____lobby)
+        {
+            LoadScreenButtonHelper.DisableConfirmButtonIfPlayersMissing(__instance, ____lobby);
+        }
+    }
+
+    internal static class LoadScreenButtonHelper
+    {
+        internal static void DisableConfirmButtonIfPlayersMissing(NSubmenu instance, LoadRunLobby lobby)
+        {
+            if (lobby?.NetService is not { Platform: PlatformType.None })
+                return;
+
+            if (lobby.ConnectedPlayerIds.Count >= lobby.Run.Players.Count)
+                return;
+
+            var confirmButton =
+                Traverse.Create(instance).Field("_confirmButton").GetValue<BaseButton>();
+            if (confirmButton != null)
+            {
+                confirmButton.Disabled = true;
+            }
         }
     }
 }
